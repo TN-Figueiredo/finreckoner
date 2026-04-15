@@ -37,7 +37,9 @@ Ver [README.md#exit-criteria](README.md) — 14 itens mensuráveis (ampliado com
 - ✅ CI green — publish.yml (3 guards + post-verify) + ci.yml (typecheck + tests + audit + eco-pinning + site-config immutability + Lighthouse warn + gitleaks CLI)
 - ✅ ADRs 001-005 committed in tnf-ecosystem/docs/adr/
 - ✅ Retro + cascade log committed in finreckoner/docs/
-- ⚠️ Affiliate terms archive (Task 32) — USER-MANUAL portal logins pending; placeholder committed
+
+**Deferred to S2 Week 1** (bundle with compliance cluster):
+- 📦 Task 32: Affiliate terms archive (5 portal logins + screenshots → `docs/legal/affiliate-terms-2026-04.md`) — NOT a blocker for S1 (no runtime references the file); IS prereq for S2 "5 afiliados ativos" epic before live affiliate links ship to prod.
 
 **See:** [docs/retro/sprint-0-2026-04-29.md](../retro/sprint-0-2026-04-29.md) for full retrospective.
 
@@ -123,7 +125,7 @@ Ver [README.md#exit-criteria](README.md) — 14 itens mensuráveis (ampliado com
 
 ---
 
-## Sprint 2 — Core Complete + Compliance [☐ not-started] (79h)
+## Sprint 2 — Core Complete + Compliance [☐ not-started] (81h — +2h Task 32 carryover from S0)
 
 **Goal:** 4 calcs completos, 4 pillars, 20 posts, LGPD+GDPR+CCPA+**CCPA DNSMPI**+FTC live, 5 afiliados ativos, analytics ativo, `/about` E-E-A-T, `/contact`, `/legal/disclaimer`+`/legal/accuracy`, **tax contractor review signed-off**. Pronto pra AdSense app.
 **Estimativa:** 2026-05-20 → 2026-06-10 (3 semanas × ~26h — sprint denso)
@@ -141,6 +143,7 @@ Ver [README.md#exit-criteria](README.md) — 14 itens mensuráveis (ampliado com
 - [ ] Brevo email capture + "Creator Tax Checklist US/CA" PDF lead magnet + welcome email (bilíngue) — **3h**
 - [ ] GA4 + GSC setup + sitemap + conversion events (calc complete, affiliate click, email submit) — **3h**
 - [ ] `@tnf/affiliate` integration (5 providers ao vivo, UTM tracking, **FTC disclosure per-link proximity** conforme 2023 FTC guidance + above-fold + footer) — **6h**
+- [ ] **Affiliate terms archive** (CARRIED OVER from S0 Task 32) — 5 portal logins (Wise, Questrade, Wealthsimple, Credit Karma, NerdWallet) → screenshots + `docs/legal/affiliate-terms-2026-04.md` populated → **prereq for live affiliate links going to prod** per FTC 16 CFR 255 audit trail — **2h**
 - [ ] 12 long-tail blog posts (batch 1b) — **24h**
 - [ ] **Tax contractor engagement signed** — SoW em `docs/legal/contractor-sow-tax-2026.md`, nome + credencial + rate + deliverable PDF path + attribution rights (para reviewer byline) — **1h**
 
