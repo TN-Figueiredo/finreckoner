@@ -1,0 +1,35 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: '@tn-figueiredo'
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test --if-present
+      - run: npm audit --audit-level=moderate || true
+      - run: chmod +x scripts/*.sh && ./scripts/check-ecosystem-pinning.sh
+      - run: ./scripts/check-site-config-immutability.sh
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+      - run: npm run build
+      - name: Lighthouse CI
+        run: npx -y @lhci/cli@0.13.0 autorun --config=apps/web/lighthouserc.json
+        continue-on-error: true   # S0: warn-only; S1+ enforce
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env: { GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} }
