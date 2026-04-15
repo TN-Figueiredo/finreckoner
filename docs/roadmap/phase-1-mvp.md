@@ -26,7 +26,22 @@ Ver [README.md#exit-criteria](README.md) — 14 itens mensuráveis (ampliado com
 
 ---
 
-## Sprint 0 — Packages + Foundation [☐ not-started] (49h)
+## Sprint 0 — Packages + Foundation [✅ done] (49h plan / ~5h wall-clock subagent-driven)
+
+**Closed:** 2026-04-15 (14 days ahead of 2026-04-29 target via subagent orchestration)
+
+**Deliverables shipped:**
+- ✅ `@tn-figueiredo/calc-engine@0.1.0` — published npm.pkg.github.com (US/CA/QC TY2026 + FX + 69 unit + 30 golden + 16 property tests + 6 externally-verified anchors)
+- ✅ `@tn-figueiredo/partner-links@0.1.0` — published (5 providers + FTC + UTM + React RSC-safe disclosure)
+- ✅ `finreckoner.com` repo live at github.com/TN-Figueiredo/finreckoner (Next 15 SSG + Tailwind 4 + React 19 + 6 static pages)
+- ✅ CI green — publish.yml (3 guards + post-verify) + ci.yml (typecheck + tests + audit + eco-pinning + site-config immutability + Lighthouse warn + gitleaks CLI)
+- ✅ ADRs 001-005 committed in tnf-ecosystem/docs/adr/
+- ✅ Retro + cascade log committed in finreckoner/docs/
+- ⚠️ Affiliate terms archive (Task 32) — USER-MANUAL portal logins pending; placeholder committed
+
+**See:** [docs/retro/sprint-0-2026-04-29.md](../retro/sprint-0-2026-04-29.md) for full retrospective.
+
+
 
 **Goal:** `@tnf/calc-engine` e `@tnf/affiliate` extendidos e released. `finreckoner.com` acessível com homepage v0 e 1 blog post teste via CMS.
 **Estimativa:** 2026-04-15 → 2026-04-29 (2 semanas × ~24.5h)
