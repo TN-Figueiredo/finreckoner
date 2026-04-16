@@ -2,9 +2,11 @@
 // IMMUTABLE: launchedAt is locked at sprint S0 close. CI guards against unauthorized edits.
 // To edit launchedAt, add the 'allow-launch-date-edit' label to the PR.
 
+import { ENV } from '@/env'
+
 export const SITE_CONFIG = {
   launchedAt: '2026-04-29',
-  deployedAt: process.env.VERCEL_GIT_COMMIT_SHA
+  deployedAt: ENV.VERCEL_GIT_COMMIT_SHA
     ? new Date().toISOString()
     : 'dev',
   url: 'https://finreckoner.com',

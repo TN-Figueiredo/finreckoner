@@ -6,6 +6,7 @@ export default defineConfig({
     environment: 'node',
     globals: false,
     css: false,
+    exclude: ['node_modules/**', 'e2e/**', '.next/**', 'out/**'],
   },
   esbuild: {
     jsx: 'automatic',
