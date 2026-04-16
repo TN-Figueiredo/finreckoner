@@ -7,6 +7,9 @@ export default defineConfig({
     globals: false,
     css: false,
   },
+  esbuild: {
+    jsx: 'automatic',
+  },
   css: {
     postcss: {
       plugins: [],

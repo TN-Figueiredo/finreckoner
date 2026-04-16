@@ -1,0 +1,39 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`snapshot stability > pillar article JSON-LD snapshot 1`] = `
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "author": {
+    "@type": "Person",
+    "name": "Thiago Figueiredo",
+    "url": "https://finreckoner.com/about",
+  },
+  "citation": [
+    {
+      "@type": "CreativeWork",
+      "datePublished": "2025-11-09",
+      "name": "IRS Rev. Proc. 2025-32",
+      "url": "https://irs.gov/x",
+    },
+  ],
+  "dateModified": "2026-04-15T00:00:00Z",
+  "datePublished": "2026-04-15T00:00:00Z",
+  "description": "What every freelancer should know",
+  "headline": "US Tax Basics",
+  "image": "https://finreckoner.com/og/default.png",
+  "inLanguage": "en",
+  "mainEntityOfPage": {
+    "@id": "https://finreckoner.com/pillars/us-tax-basics",
+    "@type": "WebPage",
+  },
+  "publisher": {
+    "@type": "Organization",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://finreckoner.com/logo.png",
+    },
+    "name": "finreckoner",
+  },
+}
+`;
