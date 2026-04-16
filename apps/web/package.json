@@ -8,25 +8,31 @@
     "start": "next start",
     "test": "vitest run --passWithNoTests",
     "typecheck": "tsc --noEmit",
-    "lighthouse": "lhci autorun"
+    "lighthouse": "lhci autorun",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "next": "15.5.15",
     "@tn-figueiredo/calc-engine": "0.1.0",
     "@tn-figueiredo/partner-links": "0.1.0",
     "@tn-figueiredo/seo": "0.1.0",
-    "@tn-figueiredo/shared": "0.8.0"
+    "@tn-figueiredo/shared": "0.8.0",
+    "next": "15.5.15",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@lhci/cli": "0.13.0",
+    "@playwright/test": "1.48.2",
+    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "0.5.15",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.1.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
     "tailwindcss": "^4",
-    "@lhci/cli": "0.13.0",
+    "typescript": "^5",
     "vitest": "1.5.0"
   }
 }
