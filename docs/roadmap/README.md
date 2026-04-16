@@ -6,6 +6,18 @@
 
 **Versão:** 2026-04-15 · **Revisão:** 2 (post-audit: calendar 12→13 sem, +compliance epics P0, S3 não-buffer)
 
+---
+
+## 🟡 Pre-S1 prep phase (2026-04-16 → 04-29)
+
+Três waves executam em janela própria antes do S1 kickoff:
+
+1. **Wave 3** — ecosystem packages publish (ver acima)
+2. **Wave 4** — CMS consumer scaffold + hygiene, INDEPENDENTE de Wave 3 · spec [`docs/superpowers/specs/2026-04-16-cms-consumer-scaffold-design.md`](../superpowers/specs/2026-04-16-cms-consumer-scaffold-design.md) · plan [`docs/superpowers/plans/2026-04-16-cms-consumer-scaffold-plan.md`](../superpowers/plans/2026-04-16-cms-consumer-scaffold-plan.md) · ADRs [006](../decisions/006-wave3-hard-escalation-fallback.md) [007](../decisions/007-cms-scaffold-and-wait.md) [008](../decisions/008-cms-consumption-decision.md)
+3. **Wave 5** — CMS integration, gated em `@tn-figueiredo/cms@1.0.0` ship + Waves 3+4 merged · skeleton [`docs/superpowers/specs/2026-04-16-cms-integration-wave-5-design.md`](../superpowers/specs/2026-04-16-cms-integration-wave-5-design.md)
+
+**G0 (2026-04-29):** Waves 3 + 4 + 5 landed; CI green; staging merged to main.
+
 ## Visão macro
 
 | Fase | Sprints | Horas | Semanas | Status | Arquivo |
@@ -27,7 +39,7 @@
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  0% (0h / 268h — Sprint 0 não iniciado)
 ```
 
-**Sprint ativo:** nenhum (bootstrap pendente — ver Sprint 0 em [phase-1-mvp.md](phase-1-mvp.md)).
+**Sprint ativo:** Wave 4 in progress (`cms-consumer-scaffold` branch). Wave 3 publish pendente. Wave 5 gated em CMS 1.0.0. S1 kickoff 2026-04-29 (G0).
 
 ## Legenda de status
 
@@ -175,6 +187,7 @@ Lista completa de 12 riscos em [phase-1-mvp.md#riscos](phase-1-mvp.md).
 
 ## Changelog
 
+- **rev3.2 (2026-04-16):** Pre-S1 prep phase estabelecida — Wave 4 (CMS consumer scaffold + hygiene, independent of Wave 3) + Wave 5 (CMS integration, gated em CMS 1.0.0 ship). Spec + plan + ADRs 006/007/008 + Wave 5 skeleton commitados em `cms-consumer-scaffold` branch.
 - **2026-04-15 rev2:** fixes pós 2 auditorias independentes (compliance + engenharia).
   - **P0 calendário:** 12 → **13 semanas** (91 dias = 13 sem); capacidade real 325h; buffer 17.5% (não 13%).
   - **P0 compliance:** `/legal/disclaimer` + `/legal/accuracy` separados (UPL risk); CCPA DNSMPI link + GPC signal; `/contact` page + ads.txt (AdSense Publisher Policy); QC é Revenu Québec TP-1015.F (NÃO CRA T4127).

@@ -89,6 +89,34 @@ Ver [README.md#exit-criteria](README.md) — 14 itens mensuráveis (ampliado com
 
 ---
 
+## Pre-S1 prep phase (2026-04-16 → 04-29) [🟡 in-progress]
+
+**Purpose:** Land infrastructure work (Wave 3 publish, Wave 4 CMS consumer scaffold + hygiene, Wave 5 CMS integration) so S1 kickoff has a clean starting state.
+
+**Wave 3 — Ecosystem packages publish** [⏸ gate-pending]
+- Target 2026-04-22, hard-escalation 2026-04-29
+- Runbook: `docs/runbooks/wave-3-publish.md`
+- ADR 005, ADR 006 (fallback)
+- Blocks: `finreckoner/main` CI (intentional per ADR 003)
+
+**Wave 4 — CMS consumer scaffold + hygiene** [🟡 in-progress, independent of Wave 3]
+- Spec: `docs/superpowers/specs/2026-04-16-cms-consumer-scaffold-design.md`
+- Plan: `docs/superpowers/plans/2026-04-16-cms-consumer-scaffold-plan.md`
+- Sub-branch: `cms-consumer-scaffold` (from pre-hygiene baseline `842b56f`)
+- Scope 4A (scaffold): pillar/post routes, templates, metadata, SEO, YMYL inline artifacts, fixtures, Playwright e2e, Lighthouse CI tightening
+- Scope 4B (hygiene): pin exact devDeps, Zod env validation, `npm audit` hard-fail, Lighthouse assertions to `error` level
+- Effort: 16-22h solo Claude / 4-6h subagent-driven
+
+**Wave 5 — CMS integration** [☐ gated on CMS 1.0.0 + Waves 3 + 4]
+- ADR 008
+- Triggers when `@tn-figueiredo/cms@1.0.0` publishes
+- Rewrites `apps/web/src/lib/content.ts` to consume CMS; deletes fixtures
+- Estimated 8-14h, recalibrate once CMS API visible
+
+**G0 gate (2026-04-29):** Waves 3 + 4 + 5 landed; CI green; staging merged to main.
+
+---
+
 ## Sprint 1 — App Core + First Calcs [☐ not-started] (60h)
 
 **Goal:** 3 calcs live (Mortgage US+CA, Compound Interest, Currency Converter), 2 pillar pages, 8 long-tail posts. ≥10 páginas indexáveis.
