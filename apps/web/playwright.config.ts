@@ -13,10 +13,11 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'npm run build && npm run start',
+    // output: 'export' requires serving the static `out/` dir, not `next start`.
+    command: 'npm run build && npx -y serve@14.2.4 out -l 3000 --no-clipboard',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    timeout: 180_000,
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

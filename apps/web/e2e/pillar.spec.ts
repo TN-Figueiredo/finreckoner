@@ -8,15 +8,18 @@ test.describe('/pillars/[slug]', () => {
   test('renders H1, meta, disclaimer, citations', async ({ page }) => {
     await expect(page.locator('h1')).toHaveText(/tax basics/i)
     await expect(page.getByText(/By /)).toBeVisible()
-    await expect(page.getByText(/Informational only/)).toBeVisible()
+    // Scope to the above-fold <aside role="note"> to avoid collision with footer disclaimer copy
+    await expect(page.locator('aside[role="note"]').filter({ hasText: /Informational only/ }).first()).toBeVisible()
     await expect(page.getByText('Sources')).toBeVisible()
   })
 
   test('emits Article JSON-LD', async ({ page }) => {
-    const ld = await page.locator('script[type="application/ld+json"]').first().textContent()
-    expect(ld).toContain('"@type":"Article"')
-    expect(ld).toContain('"datePublished"')
-    expect(ld).toContain('"publisher"')
+    // Organization, BreadcrumbList, and Article JSON-LD all render; scan all script blocks.
+    const lds = await page.locator('script[type="application/ld+json"]').allTextContents()
+    const article = lds.find(ld => ld.includes('"@type":"Article"'))
+    expect(article).toBeTruthy()
+    expect(article!).toContain('"datePublished"')
+    expect(article!).toContain('"publisher"')
   })
 
   test('emits BreadcrumbList JSON-LD', async ({ page }) => {
