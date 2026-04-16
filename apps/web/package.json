@@ -14,9 +14,11 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "next": "15.5.15",
-    "@tn-figueiredo/calc-engine": "0.1.0",
-    "@tn-figueiredo/partner-links": "0.1.0",
-    "@tn-figueiredo/seo": "0.1.0",
+    "@tn-figueiredo/calc-engine": "0.2.0",
+    "@tn-figueiredo/partner-links": "0.2.0",
+    "@tn-figueiredo/seo": "0.2.0",
+    "@tn-figueiredo/lgpd": "0.2.0",
+    "@tn-figueiredo/ymyl-ui": "0.1.0",
     "@tn-figueiredo/shared": "0.8.0"
   },
   "devDependencies": {

@@ -4,7 +4,7 @@
 > **Source of truth de execução:** este diretório.
 > **Rationale de produto e scoring:** `~/Workspace/ideias/finreckoner/` (docs 01–05, 2026-04-15).
 
-**Versão:** 2026-04-15 · **Revisão:** 2 (post-audit: calendar 12→13 sem, +compliance epics P0, S3 não-buffer)
+**Versão:** 2026-04-15 · **Revisão:** 3 (post-S0 audit)
 
 ## Visão macro
 
@@ -174,6 +174,8 @@ docs/
 Lista completa de 12 riscos em [phase-1-mvp.md#riscos](phase-1-mvp.md).
 
 ## Changelog
+
+- **rev3 (2026-04-15):** added R13-R15 (CMS extraction, subagent-speedup decay, Recharts LCP), reduced S2 from 79h→75h, renamed S3, added contractor escalation chain — driven by post-S0 audit.
 
 - **2026-04-15 rev2:** fixes pós 2 auditorias independentes (compliance + engenharia).
   - **P0 calendário:** 12 → **13 semanas** (91 dias = 13 sem); capacidade real 325h; buffer 17.5% (não 13%).
