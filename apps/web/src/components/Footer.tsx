@@ -2,7 +2,7 @@ import { SITE_CONFIG } from '@/lib/site-config'
 
 export function Footer() {
   return (
-    <footer className="border-t mt-16 py-8 text-sm text-slate-500">
+    <footer className="border-t mt-16 py-8 text-sm text-slate-700">
       <div className="max-w-4xl mx-auto px-4 flex flex-col gap-2">
         <p>
           <span suppressHydrationWarning>finreckoner.com</span>

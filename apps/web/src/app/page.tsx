@@ -3,7 +3,7 @@ import { CalcCardPlaceholder } from '@/components/CalcCardPlaceholder'
 
 export default function Home() {
   return (
-    <main>
+    <main id="main-content" tabIndex={-1}>
       <HeroCreator />
       <section className="max-w-4xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <CalcCardPlaceholder
