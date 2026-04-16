@@ -32,7 +32,8 @@ jobs:
           GITHUB_EVENT_PATH: ${{ github.event_path }}
       - run: npm run build
       - name: Lighthouse CI
-        run: npx -y @lhci/cli@0.13.0 autorun --config=apps/web/lighthouserc.json
+        working-directory: apps/web
+        run: npx -y @lhci/cli@0.13.0 autorun
       # Gitleaks action v2 requires GITLEAKS_LICENSE for org repos — run CLI directly instead:
       - name: Secret scan (gitleaks CLI)
         continue-on-error: true
