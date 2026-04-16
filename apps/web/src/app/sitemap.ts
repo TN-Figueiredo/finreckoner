@@ -2,6 +2,10 @@ import type { MetadataRoute } from 'next'
 import { SITE_CONFIG } from '@/lib/site-config'
 import { getAllPillars, getAllPosts } from '@/lib/content'
 
+// `force-static` + async is safe under output:'export' ONLY while
+// getAllPillars/getAllPosts return fixture arrays (synchronous-under-the-hood).
+// When Wave 5 wires this to @tn-figueiredo/cms, the fetch must be resolvable
+// at build time — either keep it sync-from-cache or move to a build script.
 export const dynamic = 'force-static'
 
 const STATIC_PATHS = [
