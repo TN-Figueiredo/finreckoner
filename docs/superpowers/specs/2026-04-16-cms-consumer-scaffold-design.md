@@ -3,7 +3,7 @@
 **Status:** Proposed (awaiting user review)
 **Date:** 2026-04-16
 **Author:** Thiago Figueiredo (with Claude collaboration via superpowers:brainstorming)
-**Effort estimate:** ~20h Claude wall-clock (Wave 4A scaffold 12-16h + Wave 4B hygiene 4-6h, parallelizable)
+**Effort estimate:** 16-22h solo-Claude wall-clock (Wave 4A scaffold 12-16h + Wave 4B hygiene 4-6h, parallelizable). Subagent-orchestrated mode (per S0 retro precedent): 4-6h wall-clock for the same scope; do NOT extrapolate speedup without confirming the work remains mechanical (scaffolding + testing is mechanical; content copy + visual polish is not).
 **Roadmap reference:** [`docs/roadmap/phase-1-mvp.md`](../../roadmap/phase-1-mvp.md) · [README.md Wave sequence](../../roadmap/README.md)
 **Related ADRs (to be written in Wave 4B):** 006 Wave 3 hard-escalation fallback · 007 CMS scaffold-and-wait strategy (this spec) · 008 CMS consumption decision
 **Memory entries informing this design:** `cms_status.md`, `ecosystem_contract_ownership.md`, `tnf_ecosystem.md`
@@ -29,9 +29,11 @@ Prepare finreckoner to consume `@tn-figueiredo/cms@1.0.0` **the day it ships**, 
 ```
 apps/web/
 ├── app/
+│   ├── layout.tsx                           EXTEND (SkipLink first child of <body>; Organization JSON-LD)
 │   ├── global-error.tsx                     NEW
 │   ├── not-found.tsx                        NEW
 │   ├── sitemap.ts                           EXTEND (add pillar+post slugs)
+│   ├── globals.css                          EXTEND (@plugin "@tailwindcss/typography")
 │   ├── opengraph-image.tsx                  NEW (static site-wide OG fallback)
 │   ├── pillars/
 │   │   ├── page.tsx                         NEW (index)
@@ -75,12 +77,17 @@ apps/web/
 │       ├── post.mock.ts
 │       ├── author.mock.ts
 │       └── reviewer.mock.ts
-└── e2e/                                     NEW dir (Playwright)
-    ├── playwright.config.ts
+├── playwright.config.ts                     NEW (app root — convention)
+├── package.json                             EXTEND (new devDeps: @playwright/test, @testing-library/react, @testing-library/jest-dom, @tailwindcss/typography)
+├── lighthouserc.json                        EXTEND (pillar+post URLs; thresholds to "error" level)
+└── e2e/                                     NEW dir (Playwright specs only)
     ├── pillar.spec.ts
     ├── post.spec.ts
     ├── links.spec.ts                        (broken-link sanity)
     └── disclaimer-fold.spec.ts              (above-fold viewport test)
+
+apps/web/src/lib/site-config.ts              EXTEND — only if Checkpoint A (§1.6) detects missing fields
+.github/workflows/ci.yml                     EXTEND (Playwright e2e job after build; Lighthouse URL additions)
 ```
 
 ### 1.2 Data seam — `src/lib/content.ts`
@@ -200,9 +207,11 @@ Before opening the scaffold branch, verify `apps/web/src/lib/site-config.ts` exp
 - [ ] `organization: { name: string; logoUrl: string }`
   - `logoUrl`: absolute URL, PNG or SVG, min 112px height, aspect ratio between 1:1 and 16:9, max 600px width (Google Article rich result constraints)
 - [ ] `organization.sameAs?: string[]` (optional: social profile URLs for entity unification)
-- [ ] Vercel env vars wired (`VERCEL_GIT_COMMIT_SHA` et al.) with Zod validation at module load
+- [ ] `defaultOgImage` is **non-null** (required; null-fallback undefined-behavior avoided by fail-fast at module load)
 
 Any missing field or constraint violation triggers a small `site-config.ts` PR *before* the scaffold PR.
+
+**Note on Zod env validation:** Not a prerequisite here — it is itself a Wave 4B deliverable (hygiene batch). The pre-flight checkpoint covers **site-config shape**, not env-var validation mechanism. Wave 4B adds `apps/web/src/env.ts` with Zod schema validating `VERCEL_GIT_COMMIT_SHA` and any other required env vars at module load.
 
 ### 1.7 Branch strategy
 
@@ -217,7 +226,7 @@ Any missing field or constraint violation triggers a small `site-config.ts` PR *
 | i18n routing | `alternates.languages` with a single URL per slug (no `[locale]` segment) | Content is English with US/CA variants; hreflang metadata is sufficient |
 | Pagination on `/blog` | None in MVP | 20 posts total per roadmap; YAGNI; add epic when posts exceed 30 |
 | Pagination on `/pillars` | None | 4 pillars total |
-| Fixture lookup | Direct match by slug (simple conditional); fine for 1 fixture each | Map-based lookup if fixtures grow |
+| Fixture lookup | Direct match by slug (simple conditional); fine for 1 fixture each | Map-based lookup is an easy upgrade if fixtures grow beyond 2-3 |
 | Playwright adoption | Yes — new `@playwright/test` devDep + `playwright.config.ts` + CI job | Vitest cannot render Next 15 fully; a11y + snapshot need real browser |
 | Browsers under test | `chromium` + `webkit` | Mobile Safari is the dominant YMYL mobile stack |
 | Tailwind 4 typography | `@plugin "@tailwindcss/typography";` in `globals.css` (Tailwind 4 convention) | Required for `prose` classes in `<ContentBody>` |
@@ -256,7 +265,8 @@ export function articleJsonLd(entity: PillarMock | PostMock, kind: 'pillar' | 'p
     author: entity.author ? {
       '@type': 'Person',
       name: entity.author.name,
-      url: toAbsolute(entity.author.url),
+      // author.url is optional; emit Person without url when absent
+      ...(entity.author.url ? { url: toAbsolute(entity.author.url) } : {}),
     } : undefined,
     publisher: {
       '@type': 'Organization',
@@ -440,11 +450,28 @@ export function generateViewport(): Viewport {
 | `/`, `/pillars`, `/pillars/[slug]`, `/blog`, `/blog/[slug]`, `/about`, `/contact`, `/legal/*` | `index, follow` | Default; institutional and content routes |
 | 404 | `noindex` (Next default) | — |
 
+**Global Google Bot preview directives** (set once in `RootLayout` metadata):
+```ts
+export const metadata: Metadata = {
+  ...
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+}
+```
+Rationale: YMYL pages benefit from large image previews in SERP (trust signal); `max-snippet: -1` gives Google discretion for rich snippet length. Per-page `generateMetadata` inherits unless overridden.
+
 ### 2.9 Accessibility — WCAG 2.2 AA
 
 - `<SkipLink>` as first child of `<body>` anchored to `<main id="main-content">`
 - Semantic landmarks: `<main>`, `<nav aria-label>`, `<footer>`, `<article>`
-- `prefers-reduced-motion` respected in any animation
+- `prefers-reduced-motion` respected in any animation — `loading.tsx` skeleton uses `motion-safe:animate-pulse` (Tailwind modifier) so users with reduced-motion preference get a static skeleton
 - `focus-visible` styles via Tailwind utilities
 - Color contrast verified by axe-core in Playwright
 
@@ -455,7 +482,7 @@ export function generateViewport(): Viewport {
 | `pillar.author = null` | No "By X"; JSON-LD omits `author` |
 | `pillar.reviewer = null` | No "Reviewed by"; JSON-LD unchanged |
 | `pillar.citations = []` or `null` | Citations section does not render |
-| `pillar.heroImage = null` | `<img>` and OG image fall back to `siteConfig.defaultOgImage` |
+| `pillar.heroImage = null` | `<img>` and OG image fall back to `siteConfig.defaultOgImage` (required non-null per Checkpoint A — double-null path is fail-fast at build) |
 | `post.hasAffiliateLinks = false` or undefined | FTC above-fold does not render |
 
 All template renders use optional chaining and null guards; zero non-null assertions.
@@ -481,6 +508,15 @@ All template renders use optional chaining and null guards; zero non-null assert
 - `@playwright/test` (latest stable)
 - `@testing-library/react` + `@testing-library/jest-dom` (verified absent in current `package.json`)
 - `@tailwindcss/typography` (Tailwind 4 plugin; verify canonical install path in plan phase)
+
+### 3.2.1 Unit test scope vs E2E — RSC boundary
+
+Next 15 RSCs with data fetching (`async` server components that call `getPillarBySlug`) cannot be unit-tested ergonomically with `@testing-library/react` because the data dependency is intrinsic. Split:
+
+- **Unit (Vitest + @testing-library/react):** pure template functions that receive data as props — e.g., `<PillarTemplate pillar={fixturePillar} content={<p>…</p>}/>`. The data seam is *not* exercised; fixtures passed directly.
+- **E2E (Playwright):** the real Next route render, which exercises `generateStaticParams` → `getPillarBySlug` → template render end-to-end via the actual `npm run build && npm run start` pipeline.
+
+Template components in `src/components/templates/` are therefore designed as **pure prop-driven components** (no data fetching inside) — route handlers (`page.tsx`) are the only place that fetches data.
 
 ### 3.3 Snapshot test targets
 
@@ -570,7 +606,7 @@ Unchanged.
 | File | Edit |
 |---|---|
 | `docs/roadmap/README.md` | Banner: Wave 4+5 sequence; active-sprint → "Wave 4 in progress"; rev 3.2 changelog |
-| `docs/roadmap/phase-1-mvp.md` | New epics "Wave 4 CMS consumer scaffold" + "Wave 5 CMS integration" inserted between S0 close and S1 kickoff; S1 epics revised |
+| `docs/roadmap/phase-1-mvp.md` | New section **"Pre-S1 prep phase (2026-04-16 → 04-29)"** inserted between S0 close and S1 kickoff sections; contains Wave 3 publish (existing), Wave 4 CMS consumer scaffold + hygiene (new), Wave 5 CMS integration (new). S1 epic list revised to reflect scaffold + hygiene already done. |
 | `docs/decisions/006-wave3-hard-escalation-fallback.md` | NEW |
 | `docs/decisions/007-cms-scaffold-and-wait.md` | NEW (codifies this spec) |
 | `docs/decisions/008-cms-consumption-decision.md` | NEW |
@@ -589,6 +625,16 @@ Unchanged.
 - **R16 NEW — CMS 1.0.0 API drift:** if 1.0.0 exposes a shape very different from what the normalizer expects, Wave 5 estimate (8-14h) may swell to 20h+. **Mitigation:** normalizer absorbs divergence in one file; templates remain stable.
 - **R17 NEW — Fixture shape creep:** `PillarMock` has 11 fields; each is a de facto assumption about CMS. **Mitigation:** fixtures are internal and deleted in Wave 5; normalizer owns any mapping.
 - **R18 NEW — FTC `hasAffiliateLinks` flag forgotten by author:** missed flag = no disclosure = FTC 16 CFR 255 violation. **Mitigation (post-MVP epic):** content-scanner build job that regexes `<ContentBody>` against known partner hosts and fails CI if an unlabeled affiliate URL is detected. Out of scope for this spec.
+
+- **R19 NEW — Tailwind 4 typography plugin maturity:** `@tailwindcss/typography` is established in Tailwind 3 but Tailwind 4 plugin ecosystem is recent; the `@plugin` directive path may not work as-expected. **Mitigation:** verify canonical install path in Wave 4 plan phase (before scaffold branch opens); if plugin broken, fall back to hand-written prose utility classes in `globals.css` (~30 lines, one-time).
+
+- **R20 NEW — `next/image` static export constraints:** `output: 'export'` disables default image optimization. For hero images and OG images, `<Image>` either needs `unoptimized: true` or a custom loader. **Mitigation:** for MVP fixtures + CMS-provided hero URLs, use `unoptimized: true` flag; document in `next.config.ts`; re-evaluate when real content lands (maybe switch to Cloudflare/Vercel image service). No launch blocker.
+
+- **R21 NEW — Playwright first-time setup friction:** new test framework introduces learning surface (config, CI integration, artifact handling, flake management). **Mitigation:** budget 2h within Wave 4A for Playwright initial setup; adopt conservative defaults (chromium + webkit, no sharding, no parallel beyond default); treat flakes as must-fix, not `retries: 3`.
+
+- **R22 NEW — `sitemap.ts` async fetch failure mode:** if `getPillarSlugs()` / `getPostSlugs()` throws at build, sitemap generation fails the whole build. Today: fixtures never throw. Post-CMS: network/auth issues could. **Mitigation:** in Wave 5, wrap CMS calls in `sitemap.ts` with try/catch and fall back to an empty array + emit a build warning; never fail the whole build for sitemap.
+
+- **R23 NEW — ymyl-ui prop surface may differ from inline JSX assumptions:** inline slots render `pillar.author.name`, `pillar.reviewer.credential`, etc. If `@tn-figueiredo/ymyl-ui@0.1.0` `<AuthorByline>` accepts a differently-shaped prop (e.g., `<AuthorByline author={{...}}/>` vs `<AuthorByline name=... url=.../>`), Wave 3 swap is non-trivial. **Mitigation:** ADR 004 locks ymyl-ui v0.x API contract; inline slots here read fields in a shape compatible with ymyl-ui's expected consumer contract. Verified by cross-reading ymyl-ui source during Wave 4A.
 
 ---
 
@@ -640,9 +686,9 @@ Unchanged.
 
 **Epic wrap:**
 - [ ] PR `cms-consumer-scaffold` merged to `main` (post Wave 3 rebase)
-- [ ] Vercel preview URL active showing fixtures in production-like env
+- [ ] Vercel preview URL active showing fixtures in production-like env (prerequisite: Vercel project is configured to auto-deploy previews for the branch; confirm via dashboard before PR)
 - [ ] ADRs 006/007/008 committed
-- [ ] Roadmap README + phase-1-mvp updated (Wave 4/5 visible)
+- [ ] Roadmap README + phase-1-mvp updated (Wave 4/5 visible as pre-S1 prep phase)
 - [ ] Wave 5 epic spec skeleton drafted in `docs/superpowers/specs/` (body TBD until CMS 1.0.0 API visible)
 
 ---
@@ -685,3 +731,4 @@ Rollback path: `git revert <PR-merge-commit>` → staging CI returns to pre-Wave
 ## 10. Changelog
 
 - **2026-04-16 rev1** — initial spec drafted via superpowers:brainstorming; 5 sections iterated to 98+/100 self-score each; approved for implementation planning.
+- **2026-04-16 rev2** — post-commit audit round caught 15 issues (5 critical, 6 medium, 4 minor). Patches applied: (a) `articleJsonLd` null-safe for optional `author.url`; (b) pre-flight checkpoint decoupled from Wave 4B Zod env deliverable; (c) Section 1.1 file tree completed with EXTEND targets (`layout.tsx`, `globals.css`, `lighthouserc.json`, `package.json`, `ci.yml`, `site-config.ts`); (d) Playwright config relocated to app root; (e) `max-image-preview:large` added to global robots; (f) `motion-safe:animate-pulse` applied to loading skeleton; (g) 5 new risks (R19-R23); (h) unit vs E2E boundary documented for RSC testing; (i) wall-clock qualified (solo 16-22h vs subagent 4-6h); (j) pre-S1 prep phase positioning clarified; (k) Vercel preview prerequisite noted in DoD. Post-patch self-score: 98/100.
