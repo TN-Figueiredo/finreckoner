@@ -7,10 +7,12 @@ test.describe('/pillars/[slug]', () => {
 
   test('renders H1, meta, disclaimer, citations', async ({ page }) => {
     await expect(page.locator('h1')).toHaveText(/tax basics/i)
-    await expect(page.getByText(/By /)).toBeVisible()
-    // Scope to the above-fold <aside role="note"> to avoid collision with footer disclaimer copy
-    await expect(page.locator('aside[role="note"]').filter({ hasText: /Informational only/ }).first()).toBeVisible()
-    await expect(page.getByText('Sources')).toBeVisible()
+    // YmylFooter now also renders "By <author>" after Wave 2 merge; scope to
+    // the pillar <article> to avoid footer collision.
+    await expect(page.locator('article').getByText(/By /)).toBeVisible()
+    // Scope disclaimer to above-fold <aside role="note"> inside article
+    await expect(page.locator('article aside[role="note"]').filter({ hasText: /Informational only/ }).first()).toBeVisible()
+    await expect(page.locator('article').getByText('Sources')).toBeVisible()
   })
 
   test('emits Article JSON-LD', async ({ page }) => {
