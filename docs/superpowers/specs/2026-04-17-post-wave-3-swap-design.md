@@ -1,6 +1,6 @@
 # POST-WAVE-3 Swap — Design Spec
 
-**Status:** Proposed (awaiting user approval)
+**Status:** Revised 2026-04-17 late — swap surface cut from 4 → 2 after runtime inspection of ymyl-ui@0.1.1 built JS
 **Date:** 2026-04-17
 **Author:** Thiago Figueiredo (with Claude collaboration)
 **Branch:** `post-wave-3-swap` (to be created from `main`)
@@ -17,33 +17,35 @@ Replace the inline JSX stubs in pillar/post templates with published
 Reduces template-local code duplication; future ymyl-ui improvements
 flow into finreckoner automatically.
 
-## 1. Actual swap surface (revised 9 → 4 after audit)
+## 1. Actual swap surface — final: 2 components × 2 templates
 
-After inspecting `@tn-figueiredo/ymyl-ui@0.1.1` exports, the
-original "9 POST-WAVE-3 markers" overestimates available components.
+Revised after runtime inspection of `node_modules/@tn-figueiredo/ymyl-ui/dist/react.js`:
 
-### Components that DO exist in `ymyl-ui/react`
+### Components that swap (2)
 
-| Component | Props | Swap target |
+| Component | Output | Replaces |
 |---|---|---|
-| `AuthorByline` | `author: Author, className?` | "By X" meta block |
-| `ReviewerByline` | `reviewer: Reviewer, className?` | "Reviewed by X" meta block |
-| `YmylDisclaimer` | `calcName?, jurisdiction?, variant, disclaimerHref?, className?` | Above-fold disclaimer aside |
+| `AuthorByline({ author })` | `<address><span>By </span><a rel=author>Name</a>...</address>` | inline `{pillar.author && <p>By X</p>}` |
+| `ReviewerByline({ reviewer })` | `<p>Reviewed by <strong>Name</strong>, Credential · <time>Date</time></p>` | inline `{pillar.reviewer && <p>Reviewed by...</p>}` |
 
-### `partner-links/react`
+### "Last reviewed" line — conditional
 
-| Component | Props | Consider for swap? |
-|---|---|---|
-| `FTCDisclosure` | `provider: Provider, variant: 'inline'\|'block'` | **No** — designed for per-link proximity disclosure, not generic "this post has affiliates" copy. Keep post-template's inline aside |
+`ReviewerByline` **already renders the review date**. Separate "Last reviewed: <yearmonth>" line becomes redundant when reviewer exists. Decision:
 
-### Components that DO NOT exist (stay inline)
+- `pillar.reviewer` present → drop the standalone "Last reviewed" (ReviewerByline covers it)
+- `pillar.reviewer === null` → keep inline "Last reviewed" fallback using `pillar.reviewedAt ?? pillar.updatedAt`
 
-- `<Citations />` — not in ymyl-ui@0.1.1
-- `<Jurisdiction />` — not in ymyl-ui@0.1.1
-- `<LastReviewed />` — pattern is merged into ByLines; standalone absent
+### YmylDisclaimer — **NOT** part of swap
 
-These stay as inline JSX. `POST-WAVE-3:` comments rewritten to
-`// Inline by design — no dedicated ymyl-ui component`.
+Runtime inspection shows `inlineCalcDisclaimerText()` hardcodes `"This calculator provides estimates..."`. Purpose-built for **calculator** pages, not pillar/post content pages. Using it would semantically mislabel content. **Keep the current inline `<aside role=note>` disclaimer on pillar/post** with its current generic "Informational only" copy. File an ymyl-ui@0.1.2 FR for a `<YmylContentDisclaimer>` variant later.
+
+### `FTCDisclosure` — **NOT** part of swap
+
+Takes a specific `provider: Provider`; designed for per-CTA proximity disclosure. Post's above-fold aside is generic "this post has affiliate links" — different semantics. Keep inline.
+
+### Everything else — stays inline by design
+
+- Jurisdiction footer, Citations section, FTC above-fold, Disclaimer aside — no dedicated ymyl-ui component. Comments rewritten from `POST-WAVE-3:` to `// Inline by design — no dedicated ymyl-ui@0.1.x component`.
 
 ## 2. Exact file-level changes
 
@@ -97,43 +99,47 @@ import { YmylDisclaimer } from '@tn-figueiredo/ymyl-ui/react'
 
 Identical pattern. 2 swaps + 3 stay inline (FTC above-fold + Jurisdiction + Citations).
 
-## 3. Component API compatibility
+## 3. Component API compatibility (two adapters needed)
 
 ### `pillar.author` → `AuthorByline`
 
-`PillarMock.author`: `{ name, url? }`
-`ymyl-ui.Author`: `{ name, credential?, bioUrl?, experience? }`
+- `PillarMock.author`: `{ name, url? }`
+- `ymyl-ui.Author`: `{ name, credential?, bioUrl?, experience? }`
 
-**Mismatch:** mock uses `url`, ymyl-ui uses `bioUrl`. Adapter at call
-site: `{ name, bioUrl: pillar.author.url }`.
+**Mismatch:** field renamed `url` → `bioUrl`. **Adapter at call site:**
+```tsx
+<AuthorByline author={{ name: pillar.author.name, bioUrl: pillar.author.url }} />
+```
 
 ### `pillar.reviewer` → `ReviewerByline`
 
-`ReviewerMock`: `{ name, credential, date }`
-`ymyl-ui.Reviewer`: `{ name, credential, date, attributionAllowed? }`
+- `ReviewerMock`: `{ name, credential, date }`
+- `ymyl-ui.Reviewer` (from built JS inspection): `{ name, credential, reviewedAt, attributionAllowed? }`
 
-Compatible — pass-through.
+**Mismatch:** field renamed `date` → `reviewedAt` (ymyl-ui reads this at `formatIsoDate(reviewer.reviewedAt)`). **Adapter:**
+```tsx
+<ReviewerByline reviewer={{ name: pillar.reviewer.name, credential: pillar.reviewer.credential, reviewedAt: pillar.reviewer.date }} />
+```
 
-### `pillar.jurisdiction` → `YmylDisclaimer.jurisdiction`
+Both adapters are 1-line mapping objects at the call site. Not worth
+extracting to a helper unless the fixture later grows — when CMS
+integration (Wave 5) reshapes types, normalize to ymyl-ui's shape
+directly in `src/lib/content.ts`.
 
-`PillarMock.jurisdiction`: `'US' | 'CA' | 'US-CA' | null`
-`ymyl-ui.Jurisdiction`: `'US' | 'CA' | 'CA-QC'`
+## 4. Testing — predicted assertion impact
 
-**Mismatch:** `'US-CA'` is not in ymyl-ui enum. Call-site adapter:
-`pillar.jurisdiction === 'US-CA' ? undefined : pillar.jurisdiction ?? undefined`.
+| Current assertion | AuthorByline/ReviewerByline output | Status |
+|---|---|---|
+| `getByText(/By /)` | `<span>By </span>` inside `<address>` | ✅ matches |
+| `/Reviewed by/` (regex) | `<span>Reviewed by </span>` | ✅ matches |
+| `queryByText(/Reviewed by/)` null-case (reviewer=null) | no ReviewerByline rendered | ✅ matches |
+| Playwright `article.getByText(/By /)` | `<address>` inside `<article>` | ✅ matches (address is article-scoped) |
+| `<p>` selector expectations | AuthorByline uses `<address>` (semantic), not `<p>` | ⚠ **low risk** — no test asserts `<p>` |
 
-## 4. Testing strategy
-
-### Unit tests
-- `pillar-template.test.tsx` + `post-template.test.tsx` assert text like
-  `/By /` and `/Reviewed by/`. After swap, ymyl-ui renders similar text —
-  should still pass. Verify locally first; adjust regex if needed.
-
-### E2E
-- Already scope to `<article>` (PR #4 fix). No regression risk from scope.
+If any assertion does break, fix is swap regex, not component. No planned test regex changes required — but verify after swap.
 
 ### Lighthouse + axe
-- ymyl-ui@0.1.1 ships compliant baselines; thresholds should hold.
+ymyl-ui@0.1.1 ships baselines (inline padding + font-size); thresholds restored to 0.95 on PR #5. Swap should not regress.
 
 ## 5. Rollback criteria
 
@@ -148,10 +154,12 @@ Compatible — pass-through.
 - Fixture shape normalization (`author.url → bioUrl`) — better done in Wave 5 CMS integration where types reset
 - `FTCDisclosure` per-link usage — separate epic for per-CTA disclosures
 
-## 7. Success metrics
+## 7. Success metrics (final)
 
-- [ ] 4 inline blocks swapped (AuthorByline ×2, ReviewerByline ×2, YmylDisclaimer ×2)
-- [ ] 5 inline blocks comment-rewritten (no `POST-WAVE-3:` left; replaced with design-intent comment)
+- [ ] 2 component swaps in pillar-template (AuthorByline + ReviewerByline)
+- [ ] 2 component swaps in post-template (AuthorByline + ReviewerByline)
+- [ ] Conditional drop of "Last reviewed" line when reviewer present; fallback kept when null
+- [ ] 5 remaining inline blocks comment-rewritten (YmylDisclaimer, Jurisdiction, Citations, FTC above-fold, Last-reviewed fallback) — `POST-WAVE-3:` markers replaced with "Inline by design — no dedicated ymyl-ui@0.1.x component"
 - [ ] `grep -r POST-WAVE-3 apps/web/src` returns 0
 - [ ] Vitest: template tests green
 - [ ] Playwright: chromium + webkit-mobile 0 failures
