@@ -102,8 +102,9 @@ Ver [README.md#exit-criteria](README.md) — 14 itens mensuráveis (ampliado com
 **Wave 4 — CMS consumer scaffold + hygiene** ✅ **DONE 2026-04-16**
 - Spec: `docs/superpowers/specs/2026-04-16-cms-consumer-scaffold-design.md`
 - Plan: `docs/superpowers/plans/2026-04-16-cms-consumer-scaffold-plan.md`
-- 3 PRs merged (#1 scaffold, #2 a11y fixes, #3 polish); 9 POST-WAVE-3 markers awaiting swap
+- 3 PRs merged (#1 scaffold, #2 a11y fixes, #3 polish)
 - Actual effort: ~5h subagent-driven (vs 16-22h solo estimate)
+- **Swap follow-up (2026-04-17):** PR #6 shipped — `AuthorByline` + `ReviewerByline` from `@tn-figueiredo/ymyl-ui@0.1.1` replaced inline bylines in pillar + post templates (2 components × 2 templates). Remaining 5 inline blocks (YmylDisclaimer, FTCDisclosure, Jurisdiction, Citations, Last-reviewed fallback) stay inline by design — no dedicated ymyl-ui@0.1.x component yet. Spec: `docs/superpowers/specs/2026-04-17-post-wave-3-swap-design.md`
 
 **Wave 5 — CMS integration** ☐ gated on CMS 1.0.0 + Waves 3 ✅ + 4 ✅
 - ADR 008

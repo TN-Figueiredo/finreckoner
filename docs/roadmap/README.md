@@ -39,7 +39,7 @@ Três waves antes do S1 kickoff:
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  0% (0h / 268h — Sprint 0 não iniciado)
 ```
 
-**Sprint ativo:** Wave 4 in progress (`cms-consumer-scaffold` branch). Wave 3 publish pendente. Wave 5 gated em CMS 1.0.0. S1 kickoff 2026-04-29 (G0).
+**Sprint ativo:** pre-S1 waves ✅ all shipped (Wave 3 publish + Wave 4 scaffold + POST-WAVE-3 swap PR #6). Wave 5 gated em CMS 1.0.0. **S1 kickoff 2026-04-29 (G0)** — calcs + pillars + posts.
 
 ## Legenda de status
 
@@ -186,6 +186,8 @@ docs/
 Lista completa de 12 riscos em [phase-1-mvp.md#riscos](phase-1-mvp.md).
 
 ## Changelog
+
+- **rev3.4 (2026-04-17):** POST-WAVE-3 swap ✅ shipped — PR #6 merged to `main` (`2391834`). `AuthorByline` + `ReviewerByline` from `@tn-figueiredo/ymyl-ui@0.1.1` replaced inline bylines em pillar + post templates (scope revisto 9 → 4 → 2 componentes após runtime inspection do built JS: `YmylDisclaimer` e `FTCDisclosure` têm semântica calc-specific / per-CTA, impróprias pra content pages). 5 blocks restantes (`YmylDisclaimer` genérico, `FTCDisclosure` above-fold, Jurisdiction, Citations, Last-reviewed fallback) stay inline by design — awaiting `ymyl-ui@0.1.2` epic para `<YmylContentDisclaimer>` / `<Citations>` / `<Jurisdiction>` / `<LastReviewed>`. Adapters (`author.url → bioUrl`, `reviewer.date → reviewedAt`) inline até Wave 5 CMS normalization. CI green: verify + e2e × 2 runs. Spec: [`docs/superpowers/specs/2026-04-17-post-wave-3-swap-design.md`](../superpowers/specs/2026-04-17-post-wave-3-swap-design.md).
 
 - **rev3.3 (2026-04-16 late):** Wave 3 ecosystem publish ✅ COMPLETE — 5 packages live (ymyl-ui@0.1.0 NEW + lgpd/seo/calc-engine/partner-links @0.2.0) via 4 PRs merged to tnf-ecosystem/main. React dispatcher duplication fixed monorepo-wide (consolidate devDeps at root). Staging branch with Wave 2 hygiene legal/* routes now merges cleanly. finreckoner unblocked for POST-WAVE-3 swap (9 inline JSX slots → ymyl-ui components).
 - **rev3.2 (2026-04-16):** Pre-S1 prep phase estabelecida — Wave 4 (CMS consumer scaffold + hygiene, independent of Wave 3) + Wave 5 (CMS integration, gated em CMS 1.0.0 ship). Spec + plan + ADRs 006/007/008 + Wave 5 skeleton commitados em `cms-consumer-scaffold` branch.
