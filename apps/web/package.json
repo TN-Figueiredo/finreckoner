@@ -13,16 +13,19 @@
     "e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@tn-figueiredo/calc-engine": "0.1.0",
-    "@tn-figueiredo/partner-links": "0.1.0",
-    "@tn-figueiredo/seo": "0.1.0",
+    "@tn-figueiredo/calc-engine": "0.2.0",
+    "@tn-figueiredo/lgpd": "0.2.0",
+    "@tn-figueiredo/partner-links": "0.2.0",
+    "@tn-figueiredo/seo": "0.2.0",
     "@tn-figueiredo/shared": "0.8.0",
+    "@tn-figueiredo/ymyl-ui": "0.1.0",
     "next": "15.5.15",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "zod": "3.23.8"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
     "@lhci/cli": "0.13.0",
     "@playwright/test": "1.48.2",
     "@tailwindcss/postcss": "4.2.2",

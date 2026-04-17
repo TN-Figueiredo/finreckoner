@@ -4,19 +4,19 @@
 > **Source of truth de execução:** este diretório.
 > **Rationale de produto e scoring:** `~/Workspace/ideias/finreckoner/` (docs 01–05, 2026-04-15).
 
-**Versão:** 2026-04-15 · **Revisão:** 2 (post-audit: calendar 12→13 sem, +compliance epics P0, S3 não-buffer)
+**Versão:** 2026-04-15 · **Revisão:** 3 (post-S0 audit)
 
 ---
 
 ## 🟡 Pre-S1 prep phase (2026-04-16 → 04-29)
 
-Três waves executam em janela própria antes do S1 kickoff:
+Três waves antes do S1 kickoff:
 
-1. **Wave 3** — ecosystem packages publish (ver acima)
-2. **Wave 4** — CMS consumer scaffold + hygiene, INDEPENDENTE de Wave 3 · spec [`docs/superpowers/specs/2026-04-16-cms-consumer-scaffold-design.md`](../superpowers/specs/2026-04-16-cms-consumer-scaffold-design.md) · plan [`docs/superpowers/plans/2026-04-16-cms-consumer-scaffold-plan.md`](../superpowers/plans/2026-04-16-cms-consumer-scaffold-plan.md) · ADRs [006](../decisions/006-wave3-hard-escalation-fallback.md) [007](../decisions/007-cms-scaffold-and-wait.md) [008](../decisions/008-cms-consumption-decision.md)
-3. **Wave 5** — CMS integration, gated em `@tn-figueiredo/cms@1.0.0` ship + Waves 3+4 merged · skeleton [`docs/superpowers/specs/2026-04-16-cms-integration-wave-5-design.md`](../superpowers/specs/2026-04-16-cms-integration-wave-5-design.md)
+1. **Wave 3** ✅ **COMPLETE** — ecosystem 5 packages published (ymyl-ui@0.1.0, lgpd/seo/calc-engine/partner-links @0.2.0)
+2. **Wave 4** ✅ **COMPLETE** — CMS consumer scaffold + hygiene · spec [`docs/superpowers/specs/2026-04-16-cms-consumer-scaffold-design.md`](../superpowers/specs/2026-04-16-cms-consumer-scaffold-design.md) · plan [`docs/superpowers/plans/2026-04-16-cms-consumer-scaffold-plan.md`](../superpowers/plans/2026-04-16-cms-consumer-scaffold-plan.md) · ADRs [006](../decisions/006-wave3-hard-escalation-fallback.md) [007](../decisions/007-cms-scaffold-and-wait.md) [008](../decisions/008-cms-consumption-decision.md)
+3. **Wave 5** ☐ gated — CMS integration, aguarda `@tn-figueiredo/cms@1.0.0` ship · skeleton [`docs/superpowers/specs/2026-04-16-cms-integration-wave-5-design.md`](../superpowers/specs/2026-04-16-cms-integration-wave-5-design.md)
 
-**G0 (2026-04-29):** Waves 3 + 4 + 5 landed; CI green; staging merged to main.
+**G0 (2026-04-29):** Waves 3 ✅ + 4 ✅ done; Wave 5 gated em CMS 1.0.0. S1 kickoff destravado.
 
 ## Visão macro
 
@@ -187,7 +187,10 @@ Lista completa de 12 riscos em [phase-1-mvp.md#riscos](phase-1-mvp.md).
 
 ## Changelog
 
+- **rev3.3 (2026-04-16 late):** Wave 3 ecosystem publish ✅ COMPLETE — 5 packages live (ymyl-ui@0.1.0 NEW + lgpd/seo/calc-engine/partner-links @0.2.0) via 4 PRs merged to tnf-ecosystem/main. React dispatcher duplication fixed monorepo-wide (consolidate devDeps at root). Staging branch with Wave 2 hygiene legal/* routes now merges cleanly. finreckoner unblocked for POST-WAVE-3 swap (9 inline JSX slots → ymyl-ui components).
 - **rev3.2 (2026-04-16):** Pre-S1 prep phase estabelecida — Wave 4 (CMS consumer scaffold + hygiene, independent of Wave 3) + Wave 5 (CMS integration, gated em CMS 1.0.0 ship). Spec + plan + ADRs 006/007/008 + Wave 5 skeleton commitados em `cms-consumer-scaffold` branch.
+- **rev3 (2026-04-15):** added R13-R15 (CMS extraction, subagent-speedup decay, Recharts LCP), reduced S2 from 79h→75h, renamed S3, added contractor escalation chain — driven by post-S0 audit.
+
 - **2026-04-15 rev2:** fixes pós 2 auditorias independentes (compliance + engenharia).
   - **P0 calendário:** 12 → **13 semanas** (91 dias = 13 sem); capacidade real 325h; buffer 17.5% (não 13%).
   - **P0 compliance:** `/legal/disclaimer` + `/legal/accuracy` separados (UPL risk); CCPA DNSMPI link + GPC signal; `/contact` page + ads.txt (AdSense Publisher Policy); QC é Revenu Québec TP-1015.F (NÃO CRA T4127).
