@@ -93,40 +93,39 @@ Ver [README.md#exit-criteria](README.md) — 14 itens mensuráveis (ampliado com
 
 **Purpose:** Land infrastructure work (Wave 3 publish, Wave 4 CMS consumer scaffold + hygiene, Wave 5 CMS integration) so S1 kickoff has a clean starting state.
 
-**Wave 3 — Ecosystem packages publish** [⏸ gate-pending]
-- Target 2026-04-22, hard-escalation 2026-04-29
-- Runbook: `docs/runbooks/wave-3-publish.md`
-- ADR 005, ADR 006 (fallback)
-- Blocks: `finreckoner/main` CI (intentional per ADR 003)
+**Wave 3 — Ecosystem packages publish** ✅ **DONE 2026-04-16**
+- 5 packages live: ymyl-ui@0.1.0 NEW + lgpd/seo/calc-engine/partner-links @0.2.0
+- 4 PRs merged to tnf-ecosystem/main (#15, #16, #18, #19)
+- React dispatcher duplication fixed monorepo-wide (devDep consolidation at root)
+- Runbook: `docs/runbooks/wave-3-publish.md` · ADRs 005, 006
 
-**Wave 4 — CMS consumer scaffold + hygiene** [🟡 in-progress, independent of Wave 3]
+**Wave 4 — CMS consumer scaffold + hygiene** ✅ **DONE 2026-04-16**
 - Spec: `docs/superpowers/specs/2026-04-16-cms-consumer-scaffold-design.md`
 - Plan: `docs/superpowers/plans/2026-04-16-cms-consumer-scaffold-plan.md`
-- Sub-branch: `cms-consumer-scaffold` (from pre-hygiene baseline `842b56f`)
-- Scope 4A (scaffold): pillar/post routes, templates, metadata, SEO, YMYL inline artifacts, fixtures, Playwright e2e, Lighthouse CI tightening
-- Scope 4B (hygiene): pin exact devDeps, Zod env validation, `npm audit` hard-fail, Lighthouse assertions to `error` level
-- Effort: 16-22h solo Claude / 4-6h subagent-driven
+- 3 PRs merged (#1 scaffold, #2 a11y fixes, #3 polish); 9 POST-WAVE-3 markers awaiting swap
+- Actual effort: ~5h subagent-driven (vs 16-22h solo estimate)
 
-**Wave 5 — CMS integration** [☐ gated on CMS 1.0.0 + Waves 3 + 4]
+**Wave 5 — CMS integration** ☐ gated on CMS 1.0.0 + Waves 3 ✅ + 4 ✅
 - ADR 008
-- Triggers when `@tn-figueiredo/cms@1.0.0` publishes
+- Triggers when `@tn-figueiredo/cms@1.0.0` publishes (deep refactor in progress, other terminal)
 - Rewrites `apps/web/src/lib/content.ts` to consume CMS; deletes fixtures
 - Estimated 8-14h, recalibrate once CMS API visible
 
-**G0 gate (2026-04-29):** Waves 3 + 4 + 5 landed; CI green; staging merged to main.
+**G0 gate (2026-04-29):** Waves 3 ✅ + 4 ✅ done; Wave 5 gated em CMS 1.0.0. S1 kickoff destravado.
 
 ---
 
-## Sprint 1 — App Core + First Calcs [☐ not-started] (60h)
+## Sprint 1 — App Core + First Calcs [☐ not-started] (61h)
 
 **Goal:** 3 calcs live (Mortgage US+CA, Compound Interest, Currency Converter), 2 pillar pages, 8 long-tail posts. ≥10 páginas indexáveis.
-**Estimativa:** 2026-04-29 → 2026-05-20 (3 semanas × 20h)
+**Estimativa:** 2026-04-29 → 2026-05-20 (3 semanas × ~20.3h)
 **Depende de:** Sprint 0
 
-**Epics** (soma = 60h):
-- [ ] `@tnf/calc-engine` consumer integration — `InputNumber`, `CurrencyInput`, `PercentInput`, `ResultCard`, `ShareButton` components reutilizáveis — **8h**
+**Epics** (soma = 61h):
+- [ ] `@tnf/calc-engine` consumer integration — `InputNumber`, `CurrencyInput`, `PercentInput`, `ResultCard`, `ShareButton` components reutilizáveis. **S1 Week 1 task:** validate property-test `FINAL_NUM_RUNS=10000` timing in CI; if >30s, drop to 5K and document em `docs/decisions/001-property-test-budget.md` — **8h**
 - [ ] Calc 1: Mortgage Calculator US+CA — principal+interest+taxes+insurance, amortization table, 2 locales (US: conventional/FHA; CA: CMHC insurance) — **10h**
-- [ ] Calc 2: Compound Interest Calculator — Recharts growth chart, creator savings angle — **8h**
+- [ ] **Recharts LCP <2s spike** (S1 Week 2, pré-pillars) — measure Recharts bundle Compound Interest demo on Chrome DevTools Slow 4G; decision recorded em `docs/decisions/002-recharts-vs-svg.md`. If >2s, fallback to lightweight SVG chart implementation (additional 3h budget from S1 buffer) — **1h**
+- [ ] Calc 2: Compound Interest Calculator — Recharts growth chart (ou SVG fallback per ADR 002), creator savings angle — **8h**
 - [ ] Calc 3: Currency Converter (creator lens) — 10 currencies, CAD/USD/BRL/EUR prioritário, Wise CTA integrado inline — **6h**
 - [ ] 2 pillar pages (Mortgage + Compound Interest, 2K+ words, creator-angled, FAQ schema.org, internal linking) — **12h**
 - [ ] 8 long-tail blog posts (batch 1a, 800-1500 words, creator-finance keywords) — **16h**
@@ -153,14 +152,14 @@ Ver [README.md#exit-criteria](README.md) — 14 itens mensuráveis (ampliado com
 
 ---
 
-## Sprint 2 — Core Complete + Compliance [☐ not-started] (81h — +2h Task 32 carryover from S0)
+## Sprint 2 — Core Complete + Compliance [☐ not-started] (75h — +2h Task 32 carryover from S0)
 
 **Goal:** 4 calcs completos, 4 pillars, 20 posts, LGPD+GDPR+CCPA+**CCPA DNSMPI**+FTC live, 5 afiliados ativos, analytics ativo, `/about` E-E-A-T, `/contact`, `/legal/disclaimer`+`/legal/accuracy`, **tax contractor review signed-off**. Pronto pra AdSense app.
-**Estimativa:** 2026-05-20 → 2026-06-10 (3 semanas × ~26h — sprint denso)
+**Estimativa:** 2026-05-20 → 2026-06-10 (3 semanas × 25h ✓)
 **Depende de:** Sprint 1
 **Risco alto:** YMYL + compliance gaps — tax contractor sign-off é gating pra AdSense submit
 
-**Epics** (soma = 79h):
+**Epics** (soma = 75h):
 - [ ] **Calc 4: Income Tax** (US federal + CA federal/provincial + QC separado) — bracket logic, 1099-NEC + T4A + self-employed lens, jurisdição toggle, FTC disclaimer — **14h**
 - [ ] 2 pillar pages restantes (Income Tax + Currency, 2K+ words, FAQ schema, E-E-A-T inline, internal linking) + **Author bio `/about`** (Thiago creator + 4y Canadá + CAD/USD/BRL) — **12h**
 - [ ] `@tnf/lgpd` configure + cookie banner — GDPR + LGPD + CCPA + AdSense Consent Mode v2. **Geo-gate:** EEA/UK/CH default denied; US/CA default granted (evita tank de AdSense eCPM); California: CCPA opt-out routing — **5h**
@@ -168,12 +167,11 @@ Ver [README.md#exit-criteria](README.md) — 14 itens mensuráveis (ampliado com
 - [ ] **`/legal/disclaimer` + `/legal/accuracy`** (NEW, P0 compliance) — no CPA/CFP/attorney relationship, no fiduciary duty, jurisdictional limits, hold-harmless, IRS/CRA/RQ as authoritative sources, arbitration clause — **3h**
 - [ ] **CCPA "Do Not Sell or Share My Personal Information"** footer link per-page + Global Privacy Control (GPC) signal honoring + multi-state opt-out routing (CA/CO/CT/VA/UT) — **2h**
 - [ ] **`/contact` page** com email real + DMCA notice template (AdSense Publisher Policy requirement) — **1h**
-- [ ] Brevo email capture + "Creator Tax Checklist US/CA" PDF lead magnet + welcome email (bilíngue) — **3h**
 - [ ] GA4 + GSC setup + sitemap + conversion events (calc complete, affiliate click, email submit) — **3h**
 - [ ] `@tnf/affiliate` integration (5 providers ao vivo, UTM tracking, **FTC disclosure per-link proximity** conforme 2023 FTC guidance + above-fold + footer) — **6h**
 - [ ] **Affiliate terms archive** (CARRIED OVER from S0 Task 32) — 5 portal logins (Wise, Questrade, Wealthsimple, Credit Karma, NerdWallet) → screenshots + `docs/legal/affiliate-terms-2026-04.md` populated → **prereq for live affiliate links going to prod** per FTC 16 CFR 255 audit trail — **2h**
-- [ ] 12 long-tail blog posts (batch 1b) — **24h**
-- [ ] **Tax contractor engagement signed** — SoW em `docs/legal/contractor-sow-tax-2026.md`, nome + credencial + rate + deliverable PDF path + attribution rights (para reviewer byline) — **1h**
+- [ ] 11 long-tail blog posts (batch 1b) — **22h**
+- [ ] **Tax contractor engagement signed** — SoW em `docs/legal/contractor-sow-tax-2026.md` (template base: `docs/legal/contractor-sow-template.md`), nome + credencial + rate + deliverable PDF path + attribution rights (para reviewer byline); S1 Week 2 outreach + escalation chain coordination — **2h**
 
 **Deliverables:**
 - [ ] 4 calcs funcionais, 4 pillars, 20 posts
@@ -200,16 +198,23 @@ Ver [README.md#exit-criteria](README.md) — 14 itens mensuráveis (ampliado com
 - YMYL artifacts insuficientes → AdSense auto-reject — **mitigação:** E-E-A-T checklist em PR review
 - Restricted-products adjacency via Credit Karma/NerdWallet loan products — **mitigação:** revisar ofertas ativas, whitelist só non-restricted verticals
 
+**Tax contractor SoW escalation (R5 mitigation):**
+- S1 Week 2 (May 6): outreach 3 candidates from Upwork/LinkedIn (CPA + EA preferred, US+CA tax knowledge)
+- If no SoW signature within 5 business days: activate fallback — Legal Angels ($600 1-time consult) + per-calc audit ($150/calc) for compliance review only (not full review)
+- Escalation chain documented in `docs/legal/contractor-sow-template.md`
+
 **Carry-over para S3:** —
 
 **Spec / Plan:** —
 
 ---
 
-## Sprint 3 — Polish + AdSense + Launch Prep [☐ not-started] (55h)
+## Sprint 3 — Completion + AdSense + Launch Prep [☐ not-started] (55h)
+
+> **Nota audit post-S0:** S3 é NOT polish/buffer — 13 epics across critical path. Treat as production hardening sprint.
 
 **Goal:** Production-ready, AdSense app submitted, 25+ posts, 4 calcs polished, cross-browser QA, Lighthouse ≥90, LCP <2.0s, **tax contractor review received + remediation**, reviewer byline visível.
-**Estimativa:** 2026-06-10 → 2026-07-07 (4 semanas × ~14h — polish sprint denso, NÃO é buffer)
+**Estimativa:** 2026-06-10 → 2026-07-07 (4 semanas × ~14h — completion sprint denso, NÃO é buffer)
 **Depende de:** Sprint 2
 
 **Epics** (soma = 55h):
@@ -270,16 +275,17 @@ Qualquer ❌ → **adiar Launch Week 1 semana** (decisão antes de investir em P
 
 ---
 
-## Launch Week (2026-07-08 → 2026-07-15) [☐ not-started] (25h)
+## Launch Week (2026-07-08 → 2026-07-15) [☐ not-started] (28h)
 
 **Goal:** Go-live US+CA com comunicação multi-canal coordenada. **Apenas executa se G3 passou em Jul 7.**
 
-**Tasks** (soma = 25h):
+**Tasks** (soma = 28h):
 - [ ] Product Hunt submission + assets (gallery 6 imgs, tagline, maker first-comment) — **4h**
 - [ ] Reddit soft posts — r/digitalnomad, r/creatoreconomy, r/PersonalFinanceCanada, r/freelance — **3h**
 - [ ] YouTube launch video EN publish — **2h**
 - [ ] YouTube Short PT publish — **1h**
 - [ ] Communities outreach — Circle, Beehiiv, Creator Now, Discords creator-finance — **4h**
+- [ ] **Brevo email capture + "Creator Tax Checklist US/CA" PDF lead magnet + welcome email (bilíngue)** (moved from S2 per post-S0 audit to keep S2 at 25h/wk cap) — **3h**
 - [ ] Email blast newsletter existente — **2h**
 - [ ] Monitor Sentry + GA4 realtime + respond bugs (first 72h crítico) — **6h**
 - [ ] Fix P0 bugs identificados em prod (buffer) — **3h**
@@ -301,7 +307,7 @@ Sem:    0    1    2    3    4    5    6    7    8    9   10   11   12   13
 S0 Pkgs ████ ████
 S1 App       ████ ████ ████
 S2 Core                ████ ████ ████
-S3 Polish                        ████ ████ ████ ████
+S3 Compl.                        ████ ████ ████ ████
 Launch                                                      ████
 Dates:  04/15 04/22 04/29 05/06 05/13 05/20 05/27 06/03 06/10 06/17 06/24 07/01 07/07 07/15
                   G0          G1                G2                         G3    🚀
@@ -312,10 +318,10 @@ Dates:  04/15 04/22 04/29 05/06 05/13 05/20 05/27 06/03 06/10 06/17 06/24 07/01 
 | Sprint | Semanas | Horas | Horas/semana |
 |---|:-:|:-:|:-:|
 | S0 | 2 | 49h | ~24.5h ✓ |
-| S1 | 3 | 60h | 20h ✓ |
-| S2 | 3 | 79h | ~26h (denso — +1h/sem acima de cap 25h, **intencional**: compliance gate G2 é blocker de AdSense e não pode slippar. Se slippar, cortar 2.6 YouTube embeds de Fase 2 pra back-fill batch 2 posts S2 e reequilibrar) |
-| S3 | 4 | 55h | ~14h (polish + wait AdSense) |
-| Launch | 1 | 25h | 25h ✓ |
+| S1 | 3 | 61h | ~20.3h ✓ |
+| S2 | 3 | 75h | 25h ✓ |
+| S3 | 4 | 55h | ~14h (completion + wait AdSense) |
+| Launch | 1 | 28h | 28h (launch week crunch) |
 | **Total** | **13** | **268h** | **~20.6h média** |
 
 **Capacidade:** 13 × 25h = **325h**. **Buffer: 57h (17.5%)**.
@@ -336,6 +342,9 @@ Dates:  04/15 04/22 04/29 05/06 05/13 05/20 05/27 06/03 06/10 06/17 06/24 07/01 
 | R10 | **GitHub Actions `NPM_TOKEN` PAT expira silencioso** | Média | 🟡 médio | transversal | Calendar reminder; `gh auth status` check mensal; CI fail-fast em 401 |
 | R11 | **Cloudflare DNS propagation no launch day** | Baixa | 🔴 alto | Launch | Propagar DNS 7+ dias antes; staging URL até S3 end |
 | R12 | **Supply chain / deps audit** | Baixa | 🟡 médio | transversal | Dependabot + `npm audit` no CI; pinned versions; renovate weekly |
+| R13 | **CMS extraction from bythiagofigueiredo blocking S1 posts** | Média | 🟡 médio | S0/S1 | Confirm cms ready by 2026-04-28; fallback: hardcoded MDX in `apps/web/content/` for S1 posts, refactor to `@tn-figueiredo/cms` in S2 Week 1 |
+| R14 | **Subagent speedup doesn't apply to S1+ human-paced work (UI/content/contractor liaison)** | Alta | 🟡 médio | S1-S3 | Reset velocity expectations to 25h/wk solo baseline post-S0; retro §4 calibration |
+| R15 | **Recharts library bundle violates LCP <2.0s on 3G throttled** | Média | 🟡 médio | S1 | S1 Week 2 spike: minimal Recharts demo + LCP measurement; if >2s, switch to lightweight SVG chart in S1 Week 2 (decision doc 002 will record outcome) |
 
 Mitigações detalhadas em `~/Workspace/ideias/finreckoner/03-roadmap-creator.md` §8 + este arquivo.
 
