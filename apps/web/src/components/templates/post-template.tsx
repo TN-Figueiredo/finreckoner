@@ -7,6 +7,7 @@ import { JsonLd } from '@/components/ui/json-ld'
 import { articleJsonLd } from '@/lib/json-ld'
 import { formatDate, formatYearMonth } from '@/lib/format'
 import { SITE_CONFIG } from '@/lib/site-config'
+import { AuthorByline, ReviewerByline } from '@tn-figueiredo/ymyl-ui/react'
 
 export function PostTemplate({ post, content }: { post: PostMock; content: ReactNode }) {
   const reviewDate = post.reviewedAt ?? post.updatedAt
@@ -24,27 +25,34 @@ export function PostTemplate({ post, content }: { post: PostMock; content: React
         <p className="mt-3 text-lg text-slate-600">{post.subtitle}</p>
       </header>
 
-      {/* POST-WAVE-3: replace with <AuthorByline>+<ReviewerByline>+<LastReviewed> from @tn-figueiredo/ymyl-ui */}
-      <div className="meta mt-4 text-sm text-slate-600 space-y-1">
+      <div className="meta mt-4 text-sm text-slate-700 space-y-1">
         {post.author && (
-          <p>By{' '}
-            {post.author.url
-              ? <a href={post.author.url} className="underline">{post.author.name}</a>
-              : post.author.name}
-          </p>
+          <AuthorByline
+            author={{ name: post.author.name, bioUrl: post.author.url }}
+          />
         )}
         {post.reviewer && (
-          <p>Reviewed by {post.reviewer.name}, {post.reviewer.credential} —{' '}
-            <time dateTime={post.reviewer.date}>{formatDate(post.reviewer.date)}</time>
-          </p>
+          <ReviewerByline
+            reviewer={{
+              name: post.reviewer.name,
+              credential: post.reviewer.credential,
+              reviewedAt: post.reviewer.date,
+            }}
+          />
         )}
+        {/* Published date always shown; "Last reviewed" dropped when reviewer
+            present (ReviewerByline already renders that info). Inline by design. */}
         <p>
           Published <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
-          {' '}· Last reviewed <time dateTime={reviewDate}>{formatYearMonth(reviewDate)}</time>
+          {!post.reviewer && (
+            <>
+              {' '}· Last reviewed <time dateTime={reviewDate}>{formatYearMonth(reviewDate)}</time>
+            </>
+          )}
         </p>
       </div>
 
-      {/* POST-WAVE-3: replace with <FTCDisclosure variant="above-fold"/> from @tn-figueiredo/partner-links */}
+      {/* Inline by design — partner-links <FTCDisclosure> takes a specific Provider for per-CTA proximity disclosure; this is a generic above-fold "this post has affiliate links" aside. */}
       {post.hasAffiliateLinks && (
         <aside role="note" className="my-4 rounded bg-slate-100 p-3 text-sm">
           <p>
@@ -55,7 +63,7 @@ export function PostTemplate({ post, content }: { post: PostMock; content: React
         </aside>
       )}
 
-      {/* POST-WAVE-3: replace with <Disclaimer inline/> from @tn-figueiredo/ymyl-ui */}
+      {/* Inline by design — ymyl-ui@0.1.1 YmylDisclaimer is calc-page-specific ("This calculator..."); semantically wrong for content pages. */}
       <aside role="note" className="my-6 rounded border-l-4 border-amber-400 bg-amber-50 p-4 text-sm">
         <p>
           <strong>Informational only.</strong> Not tax, legal, or financial advice.
@@ -66,12 +74,12 @@ export function PostTemplate({ post, content }: { post: PostMock; content: React
 
       <ContentBody>{content}</ContentBody>
 
-      {/* POST-WAVE-3: replace with <Jurisdiction/> from @tn-figueiredo/ymyl-ui */}
+      {/* Inline by design — no dedicated ymyl-ui@0.1.x <Jurisdiction> component. */}
       <p className="text-sm text-slate-500 mt-8">
         Jurisdiction: {post.jurisdiction ?? 'US federal / CA federal + provincial'}. State/provincial rules may vary.
       </p>
 
-      {/* POST-WAVE-3: replace with <Citations/> from @tn-figueiredo/ymyl-ui */}
+      {/* Inline by design — no dedicated ymyl-ui@0.1.x <Citations> component. */}
       {post.citations && post.citations.length > 0 && (
         <section aria-labelledby="citations-heading" className="mt-12 border-t pt-6">
           <h2 id="citations-heading" className="text-lg font-semibold">Sources</h2>
