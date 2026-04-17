@@ -5,6 +5,7 @@ import { ContentBody } from '@/components/ui/content-body'
 import { JsonLd } from '@/components/ui/json-ld'
 import { articleJsonLd } from '@/lib/json-ld'
 import { formatDate, formatYearMonth } from '@/lib/format'
+import { AuthorByline, ReviewerByline } from '@tn-figueiredo/ymyl-ui/react'
 
 export function PillarTemplate({ pillar, content }: { pillar: PillarMock; content: ReactNode }) {
   const reviewDate = pillar.reviewedAt ?? pillar.updatedAt
@@ -21,26 +22,32 @@ export function PillarTemplate({ pillar, content }: { pillar: PillarMock; conten
         <p className="mt-3 text-lg text-slate-600">{pillar.subtitle}</p>
       </header>
 
-      {/* POST-WAVE-3: replace with <AuthorByline>+<ReviewerByline>+<LastReviewed> from @tn-figueiredo/ymyl-ui */}
-      <div className="meta mt-4 text-sm text-slate-600 space-y-1">
+      <div className="meta mt-4 text-sm text-slate-700 space-y-1">
         {pillar.author && (
-          <p>By{' '}
-            {pillar.author.url
-              ? <a href={pillar.author.url} className="underline">{pillar.author.name}</a>
-              : pillar.author.name}
-          </p>
+          <AuthorByline
+            author={{ name: pillar.author.name, bioUrl: pillar.author.url }}
+          />
         )}
         {pillar.reviewer && (
-          <p>Reviewed by {pillar.reviewer.name}, {pillar.reviewer.credential} —{' '}
-            <time dateTime={pillar.reviewer.date}>{formatDate(pillar.reviewer.date)}</time>
+          <ReviewerByline
+            reviewer={{
+              name: pillar.reviewer.name,
+              credential: pillar.reviewer.credential,
+              reviewedAt: pillar.reviewer.date,
+            }}
+          />
+        )}
+        {!pillar.reviewer && (
+          // Fallback only when no reviewer — ReviewerByline already emits the
+          // date otherwise. Inline by design — no dedicated ymyl-ui@0.1.x
+          // `<LastReviewed>` component.
+          <p>Last reviewed:{' '}
+            <time dateTime={reviewDate}>{formatYearMonth(reviewDate)}</time>
           </p>
         )}
-        <p>Last reviewed:{' '}
-          <time dateTime={reviewDate}>{formatYearMonth(reviewDate)}</time>
-        </p>
       </div>
 
-      {/* POST-WAVE-3: replace with <Disclaimer inline /> from @tn-figueiredo/ymyl-ui */}
+      {/* Inline by design — ymyl-ui@0.1.1 YmylDisclaimer is calc-page-specific ("This calculator..."); semantically wrong for content pages. */}
       <aside role="note" className="my-6 rounded border-l-4 border-amber-400 bg-amber-50 p-4 text-sm">
         <p>
           <strong>Informational only.</strong> Not tax, legal, or financial advice.
@@ -51,12 +58,12 @@ export function PillarTemplate({ pillar, content }: { pillar: PillarMock; conten
 
       <ContentBody>{content}</ContentBody>
 
-      {/* POST-WAVE-3: replace with <Jurisdiction jurisdiction={pillar.jurisdiction}/> from @tn-figueiredo/ymyl-ui */}
+      {/* Inline by design — no dedicated ymyl-ui@0.1.x <Jurisdiction> component. */}
       <p className="text-sm text-slate-500 mt-8">
         Jurisdiction: {pillar.jurisdiction ?? 'US federal / CA federal + provincial'}. State/provincial rules may vary.
       </p>
 
-      {/* POST-WAVE-3: replace with <Citations citations={pillar.citations}/> from @tn-figueiredo/ymyl-ui */}
+      {/* Inline by design — no dedicated ymyl-ui@0.1.x <Citations> component. */}
       {pillar.citations && pillar.citations.length > 0 && (
         <section aria-labelledby="citations-heading" className="mt-12 border-t pt-6">
           <h2 id="citations-heading" className="text-lg font-semibold">Sources</h2>
